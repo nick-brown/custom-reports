@@ -21,7 +21,7 @@ class HomeController extends BaseController {
         define('ga_password', '***REMOVED***');
         define('ga_profile_id', '***REMOVED***');
 
-        $ga = new Google\Api\gapi(ga_email, ga_password);
+        $ga = new GoogleRequest(ga_email, ga_password);
 
         $ga->requestReportData(
             ga_profile_id,

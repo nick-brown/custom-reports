@@ -1,13 +1,12 @@
-<?php namespace Google\Api;
+<?php
 
-
-class gapi {
+class GoogleRequest {
 
     const http_interface = 'auto'; //'auto': autodetect, 'curl' or 'fopen'
     const client_login_url = 'https://www.google.com/accounts/ClientLogin';
     const account_data_url = 'https://www.googleapis.com/analytics/v2.4/management/accounts/~all/webproperties/~all/profiles'; //https://www.google.com/analytics/feeds/accounts/default
     const report_data_url = 'https://www.googleapis.com/analytics/v2.4/data';
-    const interface_name = 'GAPI-1.3';
+    const interface_name = 'GoogleRequest-1.3';
     const dev_mode = false;
     private $auth_token = null;
     private $account_entries = array();
@@ -17,14 +16,14 @@ class gapi {
     private $results = array();
 
     /**
-     * Constructor function for all new gapi instances
+     * Constructor function for all new GoogleRequest instances
      *
      * Set up authenticate with Google and get auth_token
      *
      * @param String $email
      * @param String $password
      * @param String $token
-     * @return gapi
+     * @return GoogleRequest
      */
     public function __construct($email, $password, $token = null)
     {
@@ -47,17 +46,17 @@ class gapi {
             'accountType' => 'GOOGLE',
             'Email' => $email,
             'Passwd' => $password,
-            'source' => gapi::interface_name,
+            'source' => GoogleRequest::interface_name,
             'service' => 'analytics'
         );
 
-        $response = $this->httpRequest(gapi::client_login_url, null, $post_variables);
+        $response = $this->httpRequest(GoogleRequest::client_login_url, null, $post_variables);
 
         //Convert newline delimited variables into url format then import to array
         parse_str(str_replace(array("\n", "\r\n"), '&', $response['body']), $auth_token);
 
         if (substr($response['code'], 0, 1) != '2' || !is_array($auth_token) || empty($auth_token['Auth'])) {
-            throw new Exception('GAPI: Failed to authenticate user. Error: "' . strip_tags(
+            throw new Exception('GoogleRequest: Failed to authenticate user. Error: "' . strip_tags(
                 $response['body']
             ) . '"');
         }
@@ -75,9 +74,9 @@ class gapi {
      */
     protected function httpRequest($url, $get_variables = null, $post_variables = null, $headers = null)
     {
-        $interface = gapi::http_interface;
+        $interface = GoogleRequest::http_interface;
 
-        if (gapi::http_interface == 'auto') {
+        if (GoogleRequest::http_interface == 'auto') {
             if (function_exists('curl_exec')) {
                 $interface = 'curl';
             } else {
@@ -90,7 +89,7 @@ class gapi {
         } elseif ($interface == 'fopen') {
             return $this->fopenRequest($url, $get_variables, $post_variables, $headers);
         } else {
-            throw new Exception('Invalid http interface defined. No such interface "' . gapi::http_interface . '"');
+            throw new Exception('Invalid http interface defined. No such interface "' . GoogleRequest::http_interface . '"');
         }
     }
 
@@ -198,7 +197,7 @@ class gapi {
     public function requestAccountData($start_index = 1, $max_results = 20)
     {
         $response = $this->httpRequest(
-            gapi::account_data_url,
+            GoogleRequest::account_data_url,
             array('start-index' => $start_index, 'max-results' => $max_results),
             null,
             $this->generateAuthHeader()
@@ -207,7 +206,7 @@ class gapi {
         if (substr($response['code'], 0, 1) == '2') {
             return $this->accountObjectMapper($response['body']);
         } else {
-            throw new Exception('GAPI: Failed to request account data. Error: "' . strip_tags(
+            throw new Exception('GoogleRequest: Failed to request account data. Error: "' . strip_tags(
                 $response['body']
             ) . '"');
         }
@@ -227,7 +226,7 @@ class gapi {
      * Report Account Mapper to convert the XML to array of useful PHP objects
      *
      * @param String $xml_string
-     * @return Array of gapiAccountEntry objects
+     * @return Array of GoogleRequestAccountEntry objects
      */
     protected function accountObjectMapper($xml_string)
     {
@@ -266,7 +265,7 @@ class gapi {
             $properties['title'] = strval($entry->title);
             $properties['updated'] = strval($entry->updated);
 
-            $results[] = new gapiAccountEntry($properties);
+            $results[] = new GoogleRequestAccountEntry($properties);
         }
 
         $this->account_root_parameters = $account_root_parameters;
@@ -371,15 +370,15 @@ class gapi {
         $parameters['start-index'] = $start_index;
         $parameters['max-results'] = $max_results;
 
-        $parameters['prettyprint'] = gapi::dev_mode ? 'true' : 'false';
+        $parameters['prettyprint'] = GoogleRequest::dev_mode ? 'true' : 'false';
 
-        $response = $this->httpRequest(gapi::report_data_url, $parameters, null, $this->generateAuthHeader());
+        $response = $this->httpRequest(GoogleRequest::report_data_url, $parameters, null, $this->generateAuthHeader());
 
         //HTTP 2xx
         if (substr($response['code'], 0, 1) == '2') {
             return $this->reportObjectMapper($response['body']);
         } else {
-            throw new Exception('GAPI: Failed to request report data. Error: "' . strip_tags(
+            throw new Exception('GoogleRequest: Failed to request report data. Error: "' . strip_tags(
                 $response['body']
             ) . '"');
         }
@@ -425,7 +424,7 @@ class gapi {
      * Report Object Mapper to convert the XML to array of useful PHP objects
      *
      * @param String $xml_string
-     * @return Array of gapiReportEntry objects
+     * @return Array of GoogleRequestReportEntry objects
      */
     protected function reportObjectMapper($xml_string)
     {
@@ -499,7 +498,7 @@ class gapi {
                 );
             }
 
-            $results[] = new gapiReportEntry($metrics, $dimensions);
+            $results[] = new GoogleRequestReportEntry($metrics, $dimensions);
         }
 
         $this->report_root_parameters = $report_root_parameters;
@@ -551,13 +550,13 @@ class gapi {
 
         $name = preg_replace('/^get/', '', $name);
 
-        $parameter_key = gapi::array_key_exists_nc($name, $this->report_root_parameters);
+        $parameter_key = GoogleRequest::array_key_exists_nc($name, $this->report_root_parameters);
 
         if ($parameter_key) {
             return $this->report_root_parameters[$parameter_key];
         }
 
-        $aggregate_metric_key = gapi::array_key_exists_nc($name, $this->report_aggregate_metrics);
+        $aggregate_metric_key = GoogleRequest::array_key_exists_nc($name, $this->report_aggregate_metrics);
 
         if ($aggregate_metric_key) {
             return $this->report_aggregate_metrics[$aggregate_metric_key];
@@ -594,12 +593,12 @@ class gapi {
 }
 
 /**
- * Class gapiAccountEntry
+ * Class GoogleRequestAccountEntry
  *
- * Storage for individual gapi account entries
+ * Storage for individual GoogleRequest account entries
  *
  */
-class gapiAccountEntry {
+class GoogleRequestAccountEntry {
 
     private $properties = array();
 
@@ -648,7 +647,7 @@ class gapiAccountEntry {
 
         $name = preg_replace('/^get/', '', $name);
 
-        $property_key = gapi::array_key_exists_nc($name, $this->properties);
+        $property_key = GoogleRequest::array_key_exists_nc($name, $this->properties);
 
         if ($property_key) {
             return $this->properties[$property_key];
@@ -659,12 +658,12 @@ class gapiAccountEntry {
 }
 
 /**
- * Class gapiReportEntry
+ * Class GoogleRequestReportEntry
  *
- * Storage for individual gapi report entries
+ * Storage for individual GoogleRequest report entries
  *
  */
-class gapiReportEntry {
+class GoogleRequestReportEntry {
 
     private $metrics = array();
     private $dimensions = array();
@@ -730,13 +729,13 @@ class gapiReportEntry {
 
         $name = preg_replace('/^get/', '', $name);
 
-        $metric_key = gapi::array_key_exists_nc($name, $this->metrics);
+        $metric_key = GoogleRequest::array_key_exists_nc($name, $this->metrics);
 
         if ($metric_key) {
             return $this->metrics[$metric_key];
         }
 
-        $dimension_key = gapi::array_key_exists_nc($name, $this->dimensions);
+        $dimension_key = GoogleRequest::array_key_exists_nc($name, $this->dimensions);
 
         if ($dimension_key) {
             return $this->dimensions[$dimension_key];
