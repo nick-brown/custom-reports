@@ -17,11 +17,48 @@ class HomeController extends BaseController {
 
 	public function index()
 	{
+        define('ga_email', '***REMOVED***');
+        define('ga_password', '***REMOVED***');
+        define('ga_profile_id', '***REMOVED***');
+
+        $ga = new Google\Api\gapi(ga_email, ga_password);
+
+        $ga->requestReportData(
+            ga_profile_id,
+            array('customVarValue1', 'customVarValue2', 'hostname', 'latitude', 'longitude'),
+            array('pageviews', 'uniquePageviews'),
+            NULL,
+            'campaign=~DLMPT'
+        );
+
+        $results = $ga->getResults();
+
+        $ga->requestReportData(
+            ga_profile_id,
+            array('customVarValue1', 'customVarValue2', 'hostname', 'country', 'region', 'city', 'latitude'),
+            array('pageviews', 'uniquePageviews'),
+            NULL,
+            'campaign=~DLMPT'
+        );
+
+        foreach($ga->getResults() as $k => $entry)
+        {
+            $entry->pushToDimensions(['longitude' => $results[$k]->getDimensions()['longitude']]);
+        }
+
+        foreach($ga->getResults() as $entry)
+        {
+            $metrics = $entry->getMetrics();
+            $dimensions = $entry->getDimensions();
+
+            $res = array_merge($metrics, $dimensions);
+
+//		var_dump($entry->getMetrics());
+//		var_dump($entry->getDimensions());
+        }
         echo "<pre>";
-        print_r('stopped');
+        print_r($res);
         echo "</pre>";
         die();
-		return View::make('hello');
-	}
-
+    }
 }
