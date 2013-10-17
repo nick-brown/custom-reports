@@ -4,11 +4,16 @@ class ImportController extends BaseController {
 
 	public function index()
 	{
-		return View::make('import.index');
+        $data['last_sunday'] = date('Y-m-d', strtotime('last Sunday'));
+        
+		return View::make('import.index', $data);
 	}
 
 	public function retrieve()
 	{
+        $start_date = Input::get('start_date');
+        $end_date = date('Y-m-d', strtotime('+1 week', strtotime($start_date)));
+        
         define('ga_email', '***REMOVED***');
         define('ga_password', '***REMOVED***');
         define('ga_profile_id', '***REMOVED***');
@@ -20,7 +25,9 @@ class ImportController extends BaseController {
             array('customVarValue1', 'customVarValue2', 'country', 'region', 'city', 'latitude', 'longitude'),
             array('pageviews', 'uniquePageviews', 'goal16Completions', 'goal14Completions'),
             array('region'),
-            'pagePath=~material-profile'
+            'pagePath=~material-profile',
+            $start_date,
+            $end_date
         );
 
         $results = $ga->getResults();
@@ -30,7 +37,9 @@ class ImportController extends BaseController {
             array('customVarValue1', 'customVarValue2', 'country', 'region', 'city', 'latitude', 'longitude'),
             array('pageviews', 'uniquePageviews', 'goal16Completions', 'goal14Completions'),
             array('region'),
-            'pagePath=~material-profile'
+            'pagePath=~material-profile',
+            $start_date,
+            $end_date 
         );
 
         foreach($ga->getResults() as $k => $entry)
@@ -43,7 +52,10 @@ class ImportController extends BaseController {
             $res = array_merge($metrics, $dimensions);
 
 			$compl = new Completion($res);
+            $compl->start_of_week = $start_date;
 			$compl->save();
         }
+
+        return 'Imported successfully';
     }
 }
