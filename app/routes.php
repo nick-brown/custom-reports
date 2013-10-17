@@ -12,3 +12,4 @@
 */
 
 Route::get('import', 'ImportController@index');
+Route::post('import/retrieve', 'ImportController@retrieve');
