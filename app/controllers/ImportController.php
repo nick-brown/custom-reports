@@ -2,20 +2,12 @@
 
 class ImportController extends BaseController {
 
-	/*
-	|--------------------------------------------------------------------------
-	| Default Home Controller
-	|--------------------------------------------------------------------------
-	|
-	| You may wish to use controllers instead of, or in addition to, Closure
-	| based routes. That's great! Here is an example controller method to
-	| get you started. To route to this controller, just add the route:
-	|
-	|	Route::get('/', 'HomeController@index');
-	|
-	*/
-
 	public function index()
+	{
+		return View::make('import.index');
+	}
+
+	public function retrieve()
 	{
         define('ga_email', '***REMOVED***');
         define('ga_password', '***REMOVED***');
@@ -25,38 +17,33 @@ class ImportController extends BaseController {
 
         $ga->requestReportData(
             ga_profile_id,
-            array('customVarValue1', 'customVarValue2', 'hostname', 'latitude', 'longitude'),
-            array('pageviews', 'uniquePageviews'),
-            NULL,
-            'campaign=~DLMPT'
+            array('customVarValue1', 'customVarValue2', 'country', 'region', 'city', 'latitude', 'longitude'),
+            array('pageviews', 'uniquePageviews', 'goal16Completions', 'goal14Completions'),
+            array('region'),
+            'pagePath=~material-profile'
         );
 
         $results = $ga->getResults();
 
         $ga->requestReportData(
             ga_profile_id,
-            array('customVarValue1', 'customVarValue2', 'hostname', 'country', 'region', 'city', 'latitude'),
-            array('pageviews', 'uniquePageviews'),
-            NULL,
-            'campaign=~DLMPT'
+            array('customVarValue1', 'customVarValue2', 'country', 'region', 'city', 'latitude', 'longitude'),
+            array('pageviews', 'uniquePageviews', 'goal16Completions', 'goal14Completions'),
+            array('region'),
+            'pagePath=~material-profile'
         );
 
         foreach($ga->getResults() as $k => $entry)
         {
-            $entry->pushToDimensions(['longitude' => $results[$k]->getDimensions()['longitude']]);
-        }
+            $entry->pushToDimensions(['customVarValue2' => $results[$k]->getDimensions()['customVarValue2']]);
 
-        foreach($ga->getResults() as $entry)
-        {
             $metrics = $entry->getMetrics();
             $dimensions = $entry->getDimensions();
 
             $res = array_merge($metrics, $dimensions);
-        }
 
-        echo "<pre>";
-        print_r($res);
-        echo "</pre>";
-        die();
+			$compl = new Completion($res);
+			$compl->save();
+        }
     }
 }
