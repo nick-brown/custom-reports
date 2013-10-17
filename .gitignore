@@ -8,3 +8,4 @@ composer.lock
 *.swp
 *~
 Thumbs.db
+~vimautoloadpathogen.vim
