@@ -300,7 +300,7 @@ class GoogleRequest {
         $start_date = null,
         $end_date = null,
         $start_index = 1,
-        $max_results = 30
+        $max_results = 500
     )
     {
         $parameters = array('ids' => 'ga:' . $report_id);
