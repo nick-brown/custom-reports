@@ -2,6 +2,7 @@
 <html>
 
 	<head>
+        @yield('head')
 	</head>
 	
 	<body>

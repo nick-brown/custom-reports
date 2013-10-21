@@ -84,7 +84,7 @@ class ImportController extends BaseController {
 
         $completions->requestReportData(
             ga_profile_id,
-            array('customVarValue1', 'customVarValue2', 'country', 'region', 'city', 'latitude', 'longitude'),
+            array('hostname', 'customVarValue1', 'customVarValue2', 'country', 'region', 'city', 'latitude'),
             array('pageviews', 'uniquePageviews', 'goal16Completions', 'goal14Completions'),
             array('region'),
             'pagePath=~material-profile',
@@ -94,14 +94,14 @@ class ImportController extends BaseController {
 
         foreach($completions->getResults() as $k => $entry)
         {
-            $entry->pushToDimensions(['customVarValue2' => $results[$k]->getDimensions()['customVarValue2']]);
+            $entry->pushToDimensions(['longitude' => $results[$k]->getDimensions()['longitude']]);
 
             $metrics = $entry->getMetrics();
             $dimensions = $entry->getDimensions();
 
-            $res = array_merge($metrics, $dimensions);
+            $res[] = array_merge($metrics, $dimensions);
         }
         
-        return View::make('import.test', ['first' => $results, 'second' => $completions->getResults()]);
+        return View::make('import.test', ['first' => $results, 'second' => $completions->getResults(), 'combined' => $res]);
     }
 }
