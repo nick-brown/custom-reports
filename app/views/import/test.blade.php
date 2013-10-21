@@ -7,10 +7,10 @@ Array 2: {{ $second_count = count($second) }}
 <?php $largest = max($first_count, $second_count); ?>
 <table>
     <tr>
-        <th></td>
-        <th>First Array</td>
-        <th>Second Array</td>
-        <th>Combined</td>
+        <th></th>
+        <th>First Array</th>
+        <th>Second Array</th>
+        <th>Combined</th>
     </tr>
         
     @for($x = 0; $x < $largest; $x++)
