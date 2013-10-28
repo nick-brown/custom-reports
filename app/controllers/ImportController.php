@@ -32,6 +32,7 @@ class ImportController extends BaseController {
         define('ga_profile_id', '***REMOVED***');
 
         $this->getCompletions($start_date, $end_date);
+        $this->getEvents($start_date, $end_date);
         
         return 'Imported successfully';
     }
@@ -50,7 +51,7 @@ class ImportController extends BaseController {
 
         $completions->requestReportData(
             ga_profile_id,
-            array('customVarValue1', 'customVarValue2', 'country', 'region', 'city', 'latitude', 'longitude'),
+            array('customVarValue1', 'customVarValue2', 'country', 'region', 'city', 'hostname', 'longitude'),
             array('pageviews', 'uniquePageviews', 'goal16Completions', 'goal14Completions'),
             array('region'),
             'pagePath=~material-profile',
@@ -113,21 +114,31 @@ class ImportController extends BaseController {
             $end_date
         );
 
-        // Save our dimensions
+        var_dump($events->getResults());
+
         $results = $events->getResults();
+
+        // If we're still running at this point, instatiate and save our events
+        foreach($results as $entry)
+        {
+            $metrics = $entry->getMetrics();
+            $dimensions = $entry->getDimensions();
+
+            $combined[] = array_merge($metrics, $dimensions);
+        }
 
         // If this is a test run, pass data to the test method and return the resulting view
         if(Input::get('test') == 1)
         {
-            return $this->test($results, $events->getResults(), $combined);
+            var_dump($results); die();
+            return $this->test($results, $combined);
         }
 
-        // If we're still running at this point, instatiate and save our events
         foreach($combined as $event)
         {
-            $event = new Completion($event);
-            $event->start_of_week = $start_date;
-			$event->save();
+            $ev = new TrackEvent($event);
+            $ev->start_of_week = $start_date;
+			$ev->save();
         }
     }
 }
