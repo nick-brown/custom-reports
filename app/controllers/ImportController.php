@@ -109,7 +109,7 @@ class ImportController extends BaseController {
             array('customVarValue1', 'customVarValue2', 'country', 'region', 'city', 'hostname', 'eventCategory'),
             array('totalEvents'),
             array('region'),
-            'pagePath=~material-profile;eventCategory=~Image Thumbnail,eventCategory=~Call to Action Buttons',
+            'pagePath=~material-profile;ga:eventCategory=~Image Thumbnail,ga:eventCategory=~Call to Action Buttons',
             $start_date,
             $end_date
         );
@@ -130,8 +130,7 @@ class ImportController extends BaseController {
         // If this is a test run, pass data to the test method and return the resulting view
         if(Input::get('test') == 1)
         {
-            var_dump($results); die();
-            return $this->test($results, $combined);
+            return;
         }
 
         foreach($combined as $event)
