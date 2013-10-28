@@ -350,6 +350,7 @@ class GoogleRequest {
 
         if ($filter != null) {
             $filter = $this->processFilter($filter);
+            //var_dump($filter); die();
             if ($filter !== false) {
                 $parameters['filters'] = $filter;
             }
@@ -414,7 +415,11 @@ class GoogleRequest {
         ); //Clean up operators
 
         if (strlen($filter) > 0) {
-            return urlencode($filter);
+            // URLencode and replace some characters with their defaults
+            // Solves problem with multiple filters not working
+            $this->filter = preg_replace(['/%7E/', '/%5C/', '/\+/'], ['~', '', '%20'], urlencode($filter));
+
+            return $this->filter;
         } else {
             return false;
         }
