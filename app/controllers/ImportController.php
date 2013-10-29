@@ -37,6 +37,7 @@ class ImportController extends BaseController {
         return 'Imported successfully';
     }
 
+
     // Private
 
     private function test($first, $second, $combined)
