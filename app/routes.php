@@ -14,3 +14,5 @@
 Route::get('import', 'ImportController@index');
 Route::post('import/retrieve', 'ImportController@retrieve');
 
+Route::get('/', 'ReportController@index');
+
