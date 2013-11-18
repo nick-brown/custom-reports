@@ -8,14 +8,16 @@ class Helpers {
      *
      * @param DateTime $startDate
      * @param DateTime $endDate
-     * @param int $weekdayNumber
      *
      * @return array
      */
-    public static function get_sundays_between(DateTime $startDate, DateTime $endDate, $weekdayNumber = 0)
+    public static function get_sundays_between(DateTime $startDate, DateTime $endDate)
     {
         $startDate = $startDate->getTimestamp(); 
         $endDate = $endDate->getTimestamp();
+
+        // Sundays
+        $weekdayNumber = 0;
 
         $dateArr = array();
 
