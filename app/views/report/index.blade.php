@@ -15,8 +15,8 @@
     <div id="filters">
        Filter by: 
         {{ Form::select('start_of_week', $sundays) }} &amp;
-        {{ Form::select('channelPartner') }} &amp;
-        {{ Form::select('materialName') }}
+        {{ Form::select('channelPartner', $channel_partners) }} &amp;
+        {{ Form::select('materialName', $materials) }}
     </div>
 
     <h2>DLMPT Profile Pages Report for the week of $week</h2>
