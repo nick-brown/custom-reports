@@ -1,12 +1,12 @@
 @extends('layouts.master')
 
 @section('scripts')
-    {{ HTML::script('//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js') }}
-    {{ HTML::script('js/app.js') }}
+    <% HTML::script('//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js') %>
+    <% HTML::script('js/app.js') %>
     <script>
         var analytics = { 
-            completions: {{ $completions }},
-            events: {{ $events }} 
+            completions: <% $completions %>,
+            events: <% $events %>
         };
     </script>
 @stop
@@ -14,9 +14,9 @@
 @section('body')
     <div id="filters">
        Filter by: 
-        {{ Form::select('start_of_week', $sundays) }} &amp;
-        {{ Form::select('channelPartner', $channel_partners) }} &amp;
-        {{ Form::select('materialName', $materials) }}
+        <% Form::select('start_of_week', $sundays) %> &amp;
+        <% Form::select('channelPartner', $channel_partners) %> &amp;
+        <% Form::select('materialName', $materials) %>
     </div>
 
     <h2>DLMPT Profile Pages Report for the week of $week</h2>

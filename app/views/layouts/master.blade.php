@@ -9,7 +9,7 @@
 		@yield('body')
         
         <!-- Scripts -->
-        {{ HTML::script('js/jquery-2.0.3.min.js') }}
+        <% HTML::script('js/jquery-2.0.3.min.js') %>
         @yield('scripts')
         <!-- Scripts End -->
 	</body>
