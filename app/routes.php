@@ -16,3 +16,6 @@ Route::post('import/retrieve', 'ImportController@retrieve');
 
 Route::get('/', 'ReportController@index');
 
+Route::get('/api/analytics', 'ApiController@analytics');
+Route::get('/api/sundays', 'ApiController@sundays');
+
