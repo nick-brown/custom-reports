@@ -9,10 +9,14 @@ class ReportController extends BaseController {
 	 */
 	public function index()
 	{
-        $data['completions'] = Completion::all();
-        $data['events'] = TrackEvent::all();
+        $data['completions'] = $completions = Completion::orderBy('start_of_week')->get();
+        $data['events'] = $events = TrackEvent::orderBy('start_of_week')->get();
 
-        $start_date = new DateTime('2013-09-29', new DateTimeZone('America/Phoenix'));
+        // Get the oldest of each record type
+        $oldest_record_dates[] = $completions->first()->start_of_week;
+        $oldest_record_dates[] = $events->first()->start_of_week;
+
+        $start_date = new DateTime(max($oldest_record_dates), new DateTimeZone('America/Phoenix'));
         $end_date = new DateTime('last Sunday', new DateTimeZone('America/Phoenix'));
 
         $data['sundays'] = Helpers::get_sundays_between($start_date, $end_date);
@@ -21,5 +25,4 @@ class ReportController extends BaseController {
 
 	    return View::make('report.index', $data);	
 	}
-
 }
