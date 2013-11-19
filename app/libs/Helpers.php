@@ -13,7 +13,7 @@ class Helpers {
      */
     public static function get_sundays_between(DateTime $startDate, DateTime $endDate)
     {
-        $startDate = $startDate->getTimestamp();
+        $startDate = $startDate->getTimestamp(); 
         $endDate = $endDate->getTimestamp();
 
         // Sundays
@@ -36,6 +36,6 @@ class Helpers {
             $startDate += (7 * 24 * 3600); // add 7 days
         }
 
-        return json_encode($dateArr);
+        return($dateArr);
     }
 }
