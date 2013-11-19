@@ -9,7 +9,7 @@
 		@yield('body')
         
         <!-- Scripts -->
-        <% HTML::script('js/jquery-2.0.3.min.js') %>
+        <% HTML::script('//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js') %>
         @yield('scripts')
         <!-- Scripts End -->
 	</body>
