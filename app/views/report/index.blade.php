@@ -8,7 +8,7 @@
 
 @section('body')
     <div ng-app="app">
-        <div id="filters" ng-controller="DropdownCtrl">
+        <div ng-controller="DropdownCtrl">
            Filter by:
             <select ng-options="week for week in sundays" ng-model="selected_week">
                 <option value="">Choose week...</option>
@@ -21,10 +21,12 @@
             <select ng-options="material for material in materials" ng-model="selected_material">
                 <option value="">Choose material...</option>
             </select>
+
+            <h2>DLMPT Profile Pages Report for the week of {{ selected_week || "No week selected" }}</h2>
+            <h3>For {{ selected_partner || "No Channel Partner Selected" }} profile pages</h3>
         </div>
 
-        <h2>DLMPT Profile Pages Report for the week of $week</h2>
-        <h3>For $channelPartner profile pages</h3>
+
 
         <br>
 
