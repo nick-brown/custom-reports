@@ -31,9 +31,9 @@ class ApiController extends BaseController {
         $data['materials'] = array_unique($completions->lists('customVarValue2'));
         sort($data['materials']);
 
-        $data['data']['completions'] = $completions->toArray();
-        $data['data']['events'] = $events->toArray();
+        $data['analytics']['completions'] = $completions->toArray();
+        $data['analytics']['events'] = $events->toArray();
 
-	    echo json_encode($data);
+	    return Response::json($data);
 	}
 }

@@ -21,7 +21,6 @@
             <select ng-options="material in materials">
                 <option value="">Choose week...</option>
             </select>
-            &amp;
         </div>
 
         <h2>DLMPT Profile Pages Report for the week of $week</h2>
