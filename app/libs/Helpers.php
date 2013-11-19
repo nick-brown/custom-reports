@@ -36,6 +36,6 @@ class Helpers {
             $startDate += (7 * 24 * 3600); // add 7 days
         }
 
-        return($dateArr);
+        return $dateArr;
     }
 }

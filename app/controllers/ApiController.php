@@ -24,8 +24,8 @@ class ApiController extends BaseController {
         $data['sundays'] = Helpers::get_sundays_between($start_date, $end_date);
 
         // Get unique list of channel partners
-        $data['channel_partners'] = array_unique(array_merge($completions->lists('customVarValue1'), $events->lists('customVarValue1')));
-        sort($data['channel_partners']);
+        $data['partners'] = array_unique(array_merge($completions->lists('customVarValue1'), $events->lists('customVarValue1')));
+        sort($data['partners']);
 
         // Get unique list of materials
         $data['materials'] = array_unique($completions->lists('customVarValue2'));

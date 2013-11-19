@@ -10,16 +10,16 @@
     <div ng-app="app">
         <div id="filters" ng-controller="DropdownCtrl">
            Filter by:
-            <select ng-options="sundays in dates">
+            <select ng-options="week for week in sundays" ng-model="selected_week">
                 <option value="">Choose week...</option>
             </select>
             &amp;
-            <select ng-options="partner in channelPartners">
-                <option value="">Choose week...</option>
+            <select ng-options="partner for partner in channelPartners" ng-model="selected_partner">
+                <option value="">Choose channel partner...</option>
             </select>
             &amp;
-            <select ng-options="material in materials">
-                <option value="">Choose week...</option>
+            <select ng-options="material for material in materials" ng-model="selected_material">
+                <option value="">Choose material...</option>
             </select>
         </div>
 
