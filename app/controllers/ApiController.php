@@ -7,16 +7,21 @@ class ApiController extends BaseController {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function data()
 	{
-        $data['completions'] = $completions = Completion::orderBy('start_of_week')->get();
-        $data['events'] = $events = TrackEvent::orderBy('start_of_week')->get();
+        $completions = Completion::orderBy('start_of_week')->get();
+        $events = TrackEvent::orderBy('start_of_week')->get();
 
         // Get the oldest of each record type
         $oldest_record_dates = [
             $completions->first()->start_of_week,
             $events->first()->start_of_week
         ];
+
+        $start_date = new DateTime(max($oldest_record_dates), new DateTimeZone('America/Phoenix'));
+        $end_date = new DateTime('last Sunday', new DateTimeZone('America/Phoenix'));
+
+        $data['sundays'] = Helpers::get_sundays_between($start_date, $end_date);
 
         // Get unique list of channel partners
         $data['channel_partners'] = array_unique(array_merge($completions->lists('customVarValue1'), $events->lists('customVarValue1')));
@@ -26,22 +31,9 @@ class ApiController extends BaseController {
         $data['materials'] = array_unique($completions->lists('customVarValue2'));
         sort($data['materials']);
 
+        $data['data']['completions'] = $completions->toArray();
+        $data['data']['events'] = $events->toArray();
 
-
-	    return View::make('report.index', $data);
+	    echo json_encode($data);
 	}
-
-    public function sundays()
-    {
-        // Get the oldest of each record type
-        $oldest_record_dates = [
-            Completion::orderBy('start_of_week')->first()->start_of_week,
-            TrackEvent::orderBy('start_of_week')->first()->start_of_week
-        ];
-
-        $start_date = new DateTime(max($oldest_record_dates), new DateTimeZone('America/Phoenix'));
-        $end_date = new DateTime('last Sunday', new DateTimeZone('America/Phoenix'));
-
-        echo Helpers::get_sundays_between($start_date, $end_date);
-    }
 }

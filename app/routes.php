@@ -11,11 +11,15 @@
 |
 */
 
+Route::get('/', 'ReportController@index');
+
 Route::get('import', 'ImportController@index');
 Route::post('import/retrieve', 'ImportController@retrieve');
 
-Route::get('/', 'ReportController@index');
 
-Route::get('/api/analytics', 'ApiController@analytics');
-Route::get('/api/sundays', 'ApiController@sundays');
+/**
+ * Api Routes
+ */
+
+Route::get('/api/data', 'ApiController@data');
 
