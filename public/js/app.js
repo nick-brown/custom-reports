@@ -9,25 +9,30 @@ angular.module('app', ['ngResource'])
             $scope.materials = data.materials;
             $scope.channelPartners = data.partners;
             $scope.sundays = data.sundays;
-
-            // Add completions for total DLMPT Leads
-            var completions = [];
-            $.each(data.analytics.completions, function(k, v) {
-                completions.push(v.goal16Completions);
-                completions.push(v.goal14Completions);
-            });
-
-            var sum = completions.reduce(function(previous, current) {
-                return previous + current;
-            });
-
-            var selectedDates = $filter('week')(data.analytics.completions, '2013-11-03');
-            console.log(selectedDates);
-
+            $scope.analytics = data.analytics;
         })
         .error(function(data, status, headers, config) {
             console.log('no data could be retrieved: ' + status);
         });
+
+        $scope.changeDate = function() {
+            $scope.filteredCompletions = $filter('week')($scope.analytics.completions, $scope.selected_week);
+
+            // Add completions for total DLMPT Leads
+            var completions = [];
+            $.each($scope.filteredCompletions, function(k, v) {
+                completions.push(v.goal16Completions);
+                completions.push(v.goal14Completions);
+            });
+
+            if(completions.length > 0) {
+                $scope.dlmptLeads = completions.reduce(function(previous, current) {
+                    return previous + current;
+                });
+            } else {
+                $scope.dlmptLeads = 0;
+            }
+        }
     }])
     .filter('week', function() {
         return function (input, startOfWeek) {

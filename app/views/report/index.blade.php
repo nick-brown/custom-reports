@@ -10,7 +10,7 @@
     <div ng-app="app">
         <div ng-controller="DropdownCtrl">
            Filter by:
-            <select ng-options="week for week in sundays" ng-model="selected_week">
+            <select ng-options="week for week in sundays" ng-model="selected_week" ng-change="changeDate()">
                 <option value="">Choose week...</option>
             </select>
             &amp;
@@ -24,26 +24,23 @@
 
             <h2>DLMPT Profile Pages Report for the week of {{ selected_week || "No week selected" }}</h2>
             <h3>For {{ selected_partner || "No Channel Partner Selected" }} profile pages</h3>
-        </div>
 
+            <br>
 
-
-        <br>
-
-        <h3>Totals</h3>
-
-        <div id="totals">
-            DLMPT Leads:
-            <br>
-            All Leads including DLMPT Leads:
-            <br>
-            Image Clicks:
-            <br>
-            Button Clicks:
-            <br>
-            Unique Visitors:
-            <br>
-            Pageviews:
+            <h3>Totals</h3>
+            <div id="totals">
+                DLMPT Leads: {{ dlmptLeads }}
+                <br>
+                All Leads including DLMPT Leads:
+                <br>
+                Image Clicks:
+                <br>
+                Button Clicks:
+                <br>
+                Unique Visitors:
+                <br>
+                Pageviews:
+            </div>
         </div>
     </div>
 @stop
