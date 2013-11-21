@@ -29,7 +29,7 @@
 
             <h3>Totals</h3>
             <div id="totals">
-                DLMPT Leads: {{ dlmptLeads }}
+                DLMPT Leads: {{ stats.dlmptLeads }}
                 <br>
                 All Leads including DLMPT Leads:
                 <br>

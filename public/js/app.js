@@ -1,5 +1,5 @@
 angular.module('app', ['ngResource'])
-    .controller('DropdownCtrl', ['$scope', '$http', '$filter', function($scope, $http, $filter) {
+    .controller('DropdownCtrl', ['$scope', '$http', '$filter', 'statsFactory', function($scope, $http, $filter, statsFactory) {
         // Consider using $resource instead of $http
         $http({
             method: 'GET',
@@ -15,24 +15,12 @@ angular.module('app', ['ngResource'])
             console.log('no data could be retrieved: ' + status);
         });
 
+
+
         $scope.changeDate = function() {
-            $scope.filteredCompletions = $filter('week')($scope.analytics.completions, $scope.selected_week);
+            var filteredCompletions = $filter('week')($scope.analytics.completions, $scope.selected_week);
 
-            // Add completions for total DLMPT Leads
-            var completions = [];
-
-            for(var x = 0; x < $scope.filteredCompletions.length; x++) {
-                completions.push($scope.filteredCompletions[x].goal16Completions);
-                completions.push($scope.filteredCompletions[x].goal14Completions);
-            }
-
-            var sum = function() {
-                return completions.reduce(function(previous, current) {
-                    return previous + current;
-                });
-            };
-
-            $scope.dlmptLeads = completions.length > 0 ? sum() : 0;
+            $scope.stats = statsFactory(filteredCompletions);
         }
     }])
     .filter('week', function() {
@@ -47,16 +35,29 @@ angular.module('app', ['ngResource'])
 
             return out;
         }
-    });
-//    .service('sharedProperties', function () {
-//        var partner = '';
-//
-//        return {
-//            getPartner: function () {
-//                return partner;
-//            },
-//            setProperty: function(value) {
-//                partner = value;
-//            }
-//        };
-//    });
+    })
+    .service('dlmptLeads', function() {
+        this.sum = function(filteredData) {
+            var completions = [];
+
+            for(var x = 0; x < filteredData.length; x++) {
+                completions.push(filteredData[x].goal16Completions);
+                completions.push(filteredData[x].goal14Completions);
+            }
+
+            var sum = function() {
+                return completions.reduce(function(previous, current) {
+                    return previous + current;
+                });
+            };
+
+            return completions.length > 0 ? sum() : 0;
+        }
+    })
+    .factory('statsFactory', ['dlmptLeads', function(dlmptLeads) {
+        return function(selectedRecords) {
+            return {
+                dlmptLeads: dlmptLeads.sum(selectedRecords)
+            };
+        }
+    }]);
