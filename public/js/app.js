@@ -25,13 +25,13 @@ angular.module('app', ['ngResource'])
                 completions.push(v.goal14Completions);
             });
 
-            if(completions.length > 0) {
-                $scope.dlmptLeads = completions.reduce(function(previous, current) {
+            var sum = function() {
+                return completions.reduce(function(previous, current) {
                     return previous + current;
                 });
-            } else {
-                $scope.dlmptLeads = 0;
-            }
+            };
+
+            $scope.dlmptLeads = completions.length > 0 ? sum() : 0;
         }
     }])
     .filter('week', function() {
