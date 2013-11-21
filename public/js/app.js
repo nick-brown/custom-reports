@@ -20,10 +20,11 @@ angular.module('app', ['ngResource'])
 
             // Add completions for total DLMPT Leads
             var completions = [];
-            $.each($scope.filteredCompletions, function(k, v) {
-                completions.push(v.goal16Completions);
-                completions.push(v.goal14Completions);
-            });
+
+            for(var x = 0; x < $scope.filteredCompletions.length; x++) {
+                completions.push($scope.filteredCompletions[x].goal16Completions);
+                completions.push($scope.filteredCompletions[x].goal14Completions);
+            }
 
             var sum = function() {
                 return completions.reduce(function(previous, current) {
