@@ -15,21 +15,35 @@ angular.module('app', ['ngResource'])
             console.log('no data could be retrieved: ' + status);
         });
 
-
         $scope.changeDate = function() {
-            var filteredCompletions = $filter('week')($scope.analytics.completions, $scope.selected_week);
-
-            $scope.stats = statsFactory(filteredCompletions);
+            var filteredData = $filter('week')($scope.analytics, $scope.selected_week);
+            console.log(filteredData);
+            //console.log(filteredData);
+            //$scope.stats = statsFactory(filteredData);
             //console.log($scope.stats);
         }
     }])
     .filter('week', function() {
         return function (input, startOfWeek) {
-            var out = [];
+            var out = {};
 
-            for(var x = 0; x < input.length; x++) {
-                if(input[x].start_of_week === startOfWeek) {
-                    out.push(input[x]);
+            // Loop through all input properties
+            for(var property in input) {
+                // Check to make sure it's not a prototyped property
+                if(input.hasOwnProperty(property)) {
+                    // Loop through each item in the array of the current property
+                    for(var x = 0; x < input[property].length; x++) {
+                        // See if our current record matches the given startOfWeek
+                        if(input[property][x].start_of_week === startOfWeek) {
+                            // Ensure the return object has an array to push records into
+                            if(!out.hasOwnProperty(property)) {
+                                out[property] = [];
+                            }
+                            
+                            // Add record to array
+                            out[property].push( input[property][x] );
+                        }
+                    }
                 }
             }
 
