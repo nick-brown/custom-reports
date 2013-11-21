@@ -16,15 +16,28 @@ angular.module('app', ['ngResource'])
         });
 
 
-
         $scope.changeDate = function() {
             var filteredCompletions = $filter('week')($scope.analytics.completions, $scope.selected_week);
 
             $scope.stats = statsFactory(filteredCompletions);
+            //console.log($scope.stats);
         }
     }])
     .filter('week', function() {
         return function (input, startOfWeek) {
+            var out = [];
+
+            for(var x = 0; x < input.length; x++) {
+                if(input[x].start_of_week === startOfWeek) {
+                    out.push(input[x]);
+                }
+            }
+
+            return out;
+        }
+    })
+    .filter('partner', function() {
+        return function (input, partner) {
             var out = [];
 
             for(var x = 0; x < input.length; x++) {
@@ -56,8 +69,11 @@ angular.module('app', ['ngResource'])
     })
     .factory('statsFactory', ['dlmptLeads', function(dlmptLeads) {
         return function(filteredData) {
-            return {
-                dlmptLeads: dlmptLeads.sum(filteredData)
-            };
-        }
+            var stats = { data: filteredData };
+
+            stats.dlmptLeads = dlmptLeads.sum(stats.data);
+
+
+            return stats;
+        };
     }]);
