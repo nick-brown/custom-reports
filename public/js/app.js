@@ -55,9 +55,9 @@ angular.module('app', ['ngResource'])
         }
     })
     .factory('statsFactory', ['dlmptLeads', function(dlmptLeads) {
-        return function(selectedRecords) {
+        return function(filteredData) {
             return {
-                dlmptLeads: dlmptLeads.sum(selectedRecords)
+                dlmptLeads: dlmptLeads.sum(filteredData)
             };
         }
     }]);
