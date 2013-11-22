@@ -15,11 +15,11 @@
             </select>
             &amp;
             <select ng-options="partner for partner in channelPartners" ng-model="selected_partner">
-                <option value="">Choose channel partner...</option>
+                <option value="">All channel partners...</option>
             </select>
             &amp;
             <select ng-options="material for material in materials" ng-model="selected_material">
-                <option value="">Choose material...</option>
+                <option value="">All Materials...</option>
             </select>
 
             <h2>DLMPT Profile Pages Report for the week of {{ selected_week || "No week selected" }}</h2>
@@ -33,9 +33,9 @@
                 <br>
                 All Leads including DLMPT Leads:
                 <br>
-                Image Clicks:
+                Image Clicks: {{ stats.imageClicks }}
                 <br>
-                Button Clicks:
+                Button Clicks: {{ stats.buttonClicks }}
                 <br>
                 Unique Visitors:
                 <br>

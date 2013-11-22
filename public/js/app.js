@@ -23,7 +23,10 @@ angular.module('app', ['ngResource'])
     }])
     .filter('selectedParameters', function() {
         return function (input, propertyName, value) {
-            var out = {};
+            var out = {
+                completions: [],
+                events: []
+            };
 
             // Loop through all input properties
             for(var property in input) {
@@ -48,12 +51,15 @@ angular.module('app', ['ngResource'])
             return out;
         }
     })
-    .service('dlmptLeads', function() {
-        this.sum = function(data) {
-            if( ! data.hasOwnProperty('completions')) {
-                return 0;
-            }
+    .service('totals', function() {
+        // Private sum() method
+        var sum = function(arr) {
+            return arr.reduce(function(previous, current) {
+                return previous + current;
+            });
+        };
 
+        this.dlmptLeads = function(data) {
             var completions = [];
 
             for(var x = 0; x < data.completions.length; x++) {
@@ -61,20 +67,37 @@ angular.module('app', ['ngResource'])
                 completions.push(data.completions[x].goal14Completions);
             }
 
-            var total = function() {
-                return completions.reduce(function(previous, current) {
-                    return previous + current;
-                });
-            };
+            return completions.length > 0 ? sum(completions) : 0;
+        }
 
-            return completions.length > 0 ? total() : 0;
+        this.clicks = function(data, category) {
+            var clicks = 0;
+
+            for(var x = 0; x < data.events.length; x++) {
+                if(data.events[x].eventCategory.toLowerCase() === category.toLowerCase()) {
+                    clicks += data.events[x].totalEvents;
+                }
+            }
+
+            return clicks;
+        }
+
+        this.uniquePageviews = function(data) {
+            var pageviews = [];
+
+            for(var x = 0; x < data.completions.length; x++) {
+                pageviews.push(data.events[x]);
+            }
         }
     })
-    .factory('statsFactory', ['dlmptLeads', function(dlmptLeads) {
+    .factory('statsFactory', ['totals', function(totals) {
         return function(filteredData) {
             var stats = { data: filteredData };
 
-            stats.dlmptLeads = dlmptLeads.sum(stats.data);
+            stats.dlmptLeads = totals.dlmptLeads(stats.data);
+            stats.imageClicks = totals.clicks(stats.data, 'image thumbnail');
+            stats.buttonClicks = totals.clicks(stats.data, 'call to action buttons');
+            //stats.uniquePageviews = totals.uniquePageviews(stats.data);
 
             return stats;
         };
