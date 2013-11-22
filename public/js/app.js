@@ -17,10 +17,8 @@ angular.module('app', ['ngResource'])
 
         $scope.changeDate = function() {
             var filteredData = $filter('week')($scope.analytics, $scope.selected_week);
-            console.log(filteredData);
-            //console.log(filteredData);
-            //$scope.stats = statsFactory(filteredData);
-            //console.log($scope.stats);
+
+            $scope.stats = statsFactory(filteredData);
         }
     }])
     .filter('week', function() {
@@ -36,10 +34,10 @@ angular.module('app', ['ngResource'])
                         // See if our current record matches the given startOfWeek
                         if(input[property][x].start_of_week === startOfWeek) {
                             // Ensure the return object has an array to push records into
-                            if(!out.hasOwnProperty(property)) {
+                            if( ! out.hasOwnProperty(property)) {
                                 out[property] = [];
                             }
-                            
+
                             // Add record to array
                             out[property].push( input[property][x] );
                         }
@@ -64,21 +62,25 @@ angular.module('app', ['ngResource'])
         }
     })
     .service('dlmptLeads', function() {
-        this.sum = function(filteredData) {
-            var completions = [];
-
-            for(var x = 0; x < filteredData.length; x++) {
-                completions.push(filteredData[x].goal16Completions);
-                completions.push(filteredData[x].goal14Completions);
+        this.sum = function(data) {
+            if( ! data.hasOwnProperty('completions')) {
+                return 0;
             }
 
-            var sum = function() {
+            var completions = [];
+
+            for(var x = 0; x < data.completions.length; x++) {
+                completions.push(data.completions[x].goal16Completions);
+                completions.push(data.completions[x].goal14Completions);
+            }
+
+            var total = function() {
                 return completions.reduce(function(previous, current) {
                     return previous + current;
                 });
             };
 
-            return completions.length > 0 ? sum() : 0;
+            return completions.length > 0 ? total() : 0;
         }
     })
     .factory('statsFactory', ['dlmptLeads', function(dlmptLeads) {
@@ -86,7 +88,6 @@ angular.module('app', ['ngResource'])
             var stats = { data: filteredData };
 
             stats.dlmptLeads = dlmptLeads.sum(stats.data);
-
 
             return stats;
         };
