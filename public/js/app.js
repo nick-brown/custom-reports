@@ -16,13 +16,13 @@ angular.module('app', ['ngResource'])
         });
 
         $scope.changeDate = function() {
-            var filteredData = $filter('week')($scope.analytics, $scope.selected_week);
+            var filteredData = $filter('selectedParameters')($scope.analytics, 'start_of_week', $scope.selected_week);
 
             $scope.stats = statsFactory(filteredData);
         }
     }])
-    .filter('week', function() {
-        return function (input, startOfWeek) {
+    .filter('selectedParameters', function() {
+        return function (input, propertyName, value) {
             var out = {};
 
             // Loop through all input properties
@@ -32,7 +32,7 @@ angular.module('app', ['ngResource'])
                     // Loop through each item in the array of the current property
                     for(var x = 0; x < input[property].length; x++) {
                         // See if our current record matches the given startOfWeek
-                        if(input[property][x].start_of_week === startOfWeek) {
+                        if(input[property][x][propertyName] === value) {
                             // Ensure the return object has an array to push records into
                             if( ! out.hasOwnProperty(property)) {
                                 out[property] = [];
@@ -42,19 +42,6 @@ angular.module('app', ['ngResource'])
                             out[property].push( input[property][x] );
                         }
                     }
-                }
-            }
-
-            return out;
-        }
-    })
-    .filter('partner', function() {
-        return function (input, partner) {
-            var out = [];
-
-            for(var x = 0; x < input.length; x++) {
-                if(input[x].start_of_week === startOfWeek) {
-                    out.push(input[x]);
                 }
             }
 
