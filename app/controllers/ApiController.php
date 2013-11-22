@@ -36,4 +36,21 @@ class ApiController extends BaseController {
 
 	    return Response::json($data);
 	}
+
+    public function dates()
+    {
+        /**
+         * Get the oldest of each record type
+         * Could be refactored to a join statement
+         */
+        $oldest_record_dates[] = Completion::min('start_of_week');
+        $oldest_record_dates[] = TrackEvent::min('start_of_week');
+
+        $start_date = new DateTime(min($oldest_record_dates), new DateTimeZone('America/Phoenix'));
+        $end_date = new DateTime('last Sunday', new DateTimeZone('America/Phoenix'));
+
+        $sundays = Helpers::get_sundays_between($start_date, $end_date);
+
+        return Response::json($sundays);
+    }
 }
