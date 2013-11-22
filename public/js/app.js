@@ -83,11 +83,13 @@ angular.module('app', ['ngResource'])
         }
 
         this.uniquePageviews = function(data) {
-            var pageviews = [];
+            var pageviews = 0;
 
             for(var x = 0; x < data.completions.length; x++) {
-                pageviews.push(data.events[x]);
+                pageviews += data.completions[x].uniquePageviews;
             }
+
+            return pageviews;
         }
     })
     .factory('statsFactory', ['totals', function(totals) {
@@ -97,7 +99,7 @@ angular.module('app', ['ngResource'])
             stats.dlmptLeads = totals.dlmptLeads(stats.data);
             stats.imageClicks = totals.clicks(stats.data, 'image thumbnail');
             stats.buttonClicks = totals.clicks(stats.data, 'call to action buttons');
-            //stats.uniquePageviews = totals.uniquePageviews(stats.data);
+            stats.uniquePageviews = totals.uniquePageviews(stats.data);
 
             return stats;
         };

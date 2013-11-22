@@ -39,7 +39,7 @@
                 <br>
                 Unique Visitors:
                 <br>
-                Pageviews:
+                Pageviews: {{ stats.uniquePageviews }}
             </div>
         </div>
     </div>
