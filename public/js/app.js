@@ -82,11 +82,11 @@ angular.module('app', ['ngResource'])
             return clicks;
         }
 
-        this.uniquePageviews = function(data) {
+        this.views = function(data, viewType) {
             var pageviews = 0;
 
             for(var x = 0; x < data.completions.length; x++) {
-                pageviews += data.completions[x].uniquePageviews;
+                pageviews += data.completions[x][viewType];
             }
 
             return pageviews;
@@ -99,7 +99,8 @@ angular.module('app', ['ngResource'])
             stats.dlmptLeads = totals.dlmptLeads(stats.data);
             stats.imageClicks = totals.clicks(stats.data, 'image thumbnail');
             stats.buttonClicks = totals.clicks(stats.data, 'call to action buttons');
-            stats.uniquePageviews = totals.uniquePageviews(stats.data);
+            stats.uniquePageviews = totals.views(stats.data, 'uniquePageviews');
+            stats.pageviews = totals.views(stats.data, 'pageviews');
 
             return stats;
         };

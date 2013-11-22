@@ -37,9 +37,9 @@
                 <br>
                 Button Clicks: {{ stats.buttonClicks }}
                 <br>
-                Unique Visitors:
+                Unique Visitors: {{ stats.uniquePageviews }}
                 <br>
-                Pageviews: {{ stats.uniquePageviews }}
+                Pageviews: {{ stats.pageviews }}
             </div>
         </div>
     </div>
