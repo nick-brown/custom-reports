@@ -28,7 +28,7 @@ angular.module('app', ['ngResource'])
                 events: []
             };
 
-            // Loop through all input properties
+            // Loop through all input properties (usually just completions and events
             for(var property in input) {
                 // Check to make sure it's not a prototyped property
                 if(input.hasOwnProperty(property)) {
