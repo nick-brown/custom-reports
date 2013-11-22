@@ -53,4 +53,12 @@ class ApiController extends BaseController {
 
         return Response::json($sundays);
     }
+
+    public function search()
+    {
+        echo "<pre>";
+        print_r(Input::get('startOfWeek'));
+        echo "</pre>";
+        die();
+    }
 }

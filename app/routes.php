@@ -22,4 +22,6 @@ Route::post('import/retrieve', 'ImportController@retrieve');
  */
 
 Route::get('/api/data', 'ApiController@data');
+Route::get('/api/dates', 'ApiController@dates');
+Route::get('/api/search', 'ApiController@search');
 
