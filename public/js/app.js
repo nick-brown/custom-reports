@@ -1,24 +1,30 @@
 angular.module('app', ['ngResource'])
     .controller('DropdownCtrl', ['$scope', '$http', '$filter', 'statsFactory', function($scope, $http, $filter, statsFactory) {
         // Consider using $resource instead of $http
-        $http({
-            method: 'GET',
-            url: paths.public + 'api/data'
-        })
-        .success(function(data, status, headers, config) {
-            $scope.materials = data.materials;
-            $scope.channelPartners = data.partners;
-            $scope.sundays = data.sundays;
-            $scope.analytics = data.analytics;
-        })
-        .error(function(data, status, headers, config) {
-            console.log('no data could be retrieved: ' + status);
+        $http.get(paths.public + 'api/dates').then(function(request) {
+            $scope.sundays = request.data;
         });
+//        $http({
+//            method: 'GET',
+//            url: paths.public + 'api/data'
+//        })
+//        .success(function(data, status, headers, config) {
+//            $scope.materials = data.materials;
+//            $scope.channelPartners = data.partners;
+//            $scope.sundays = data.sundays;
+//
+//        })
+//        .error(function(data, status, headers, config) {
+//            console.log('no data could be retrieved: ' + status);
+//        });
 
         $scope.changeDate = function() {
-            var filteredData = $filter('selectedParameters')($scope.analytics, 'start_of_week', $scope.selected_week);
+            $http.get(paths.public + 'api/search', { params: { startOfWeek: $scope.selected_week }}).then(function(request){
+                $scope.data = request.data;
+            });
+            //var filteredData = $filter('selectedParameters')($scope.analytics, 'start_of_week', $scope.selected_week);
 
-            $scope.stats = statsFactory(filteredData);
+            //$scope.stats = statsFactory(filteredData);
         }
     }])
     .filter('selectedParameters', function() {
