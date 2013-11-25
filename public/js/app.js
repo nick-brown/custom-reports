@@ -1,5 +1,5 @@
 angular.module('app', ['ngResource'])
-    .controller('DropdownCtrl', ['$scope', '$http', '$filter', 'statsFactory', function($scope, $http, $filter, statsFactory) {
+    .controller('DropdownCtrl', ['$scope', '$http', 'stats', function($scope, $http, stats) {
         // Consider using $resource instead of $http
         $http.get(paths.public + 'api/dates').then(function(request) {
             $scope.sundays = request.data;
@@ -20,9 +20,11 @@ angular.module('app', ['ngResource'])
 
         $scope.changeDate = function() {
             $http.get(paths.public + 'api/search', { params: { startOfWeek: $scope.selected_week }}).then(function(request){
-                $scope.analytics = request.data.analytics;
                 $scope.channelPartners = request.data.partners;
                 $scope.materials = request.data.materials;
+
+                stats.data = request.data.analytics;
+                stats.filterData('customVarValue1', 'Laser & Sign Technology');
             });
 
             //var filteredData = $filter('selectedParameters')($scope.analytics, 'start_of_week', $scope.selected_week);
@@ -101,16 +103,26 @@ angular.module('app', ['ngResource'])
             return pageviews;
         }
     })
-    .factory('statsFactory', ['totals', function(totals) {
-        return function(filteredData) {
-            var stats = { data: filteredData };
+    .service('stats', ['totals', '$filter', function(totals, $filter) {
+        this.data = this.data || {};
+        this.filteredData = this.filteredData || {};
 
-            stats.dlmptLeads = totals.dlmptLeads(stats.data);
-            stats.imageClicks = totals.clicks(stats.data, 'image thumbnail');
-            stats.buttonClicks = totals.clicks(stats.data, 'call to action buttons');
-            stats.uniquePageviews = totals.views(stats.data, 'uniquePageviews');
-            stats.pageviews = totals.views(stats.data, 'pageviews');
+        this.filterData = function(propertyName, value) {
+            console.log(this.data);
+            var filteredData = $filter('selectedParameters')(this.data, propertyName, value);
+            console.log(filteredData);
+        }
+//        this.originalData = this.originalData || {};
+//
+//        this.filteredData = this.filteredData || {};
+//
+//        this.filterData = function(propertyName, value) {
+//            this.filteredData =
+//        }
 
-            return stats;
-        };
+//        stats.dlmptLeads = totals.dlmptLeads(stats.data);
+//        stats.imageClicks = totals.clicks(stats.data, 'image thumbnail');
+//        stats.buttonClicks = totals.clicks(stats.data, 'call to action buttons');
+//        stats.uniquePageviews = totals.views(stats.data, 'uniquePageviews');
+//        stats.pageviews = totals.views(stats.data, 'pageviews');
     }]);
