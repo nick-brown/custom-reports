@@ -56,9 +56,34 @@ class ApiController extends BaseController {
 
     public function search()
     {
-        echo "<pre>";
-        print_r(Input::get('startOfWeek'));
-        echo "</pre>";
-        die();
+        $startOfWeek = Input::get('startOfWeek');
+
+        $completions = Completion::where('start_of_week', '=', $startOfWeek)->get();
+        $events = TrackEvent::where('start_of_week', '=', $startOfWeek)->get();
+
+        $data['partners'] = $this->get_unique_partner_list($completions, $events);
+
+        $data['materials'] = $this->get_unique_materials_list($completions);
+
+        $data['analytics']['completions'] = $completions->toArray();
+        $data['analytics']['events'] = $events->toArray();
+
+        return Response::json($data);
+    }
+
+    private function get_unique_partner_list($completions, $events)
+    {
+        $arr = array_unique(array_merge($completions->lists('customVarValue1'), $events->lists('customVarValue1')));
+        sort($arr);
+
+        return $arr;
+    }
+
+    private function get_unique_materials_list($completions)
+    {
+        $arr = array_unique($completions->lists('customVarValue2'));
+        sort($arr);
+
+        return $arr;
     }
 }

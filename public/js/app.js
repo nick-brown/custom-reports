@@ -20,8 +20,11 @@ angular.module('app', ['ngResource'])
 
         $scope.changeDate = function() {
             $http.get(paths.public + 'api/search', { params: { startOfWeek: $scope.selected_week }}).then(function(request){
-                $scope.data = request.data;
+                $scope.analytics = request.data.analytics;
+                $scope.channelPartners = request.data.partners;
+                $scope.materials = request.data.materials;
             });
+
             //var filteredData = $filter('selectedParameters')($scope.analytics, 'start_of_week', $scope.selected_week);
 
             //$scope.stats = statsFactory(filteredData);
