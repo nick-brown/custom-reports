@@ -4,35 +4,29 @@ angular.module('app', ['ngResource'])
         $http.get(paths.public + 'api/dates').then(function(request) {
             $scope.sundays = request.data;
         });
-//        $http({
-//            method: 'GET',
-//            url: paths.public + 'api/data'
-//        })
-//        .success(function(data, status, headers, config) {
-//            $scope.materials = data.materials;
-//            $scope.channelPartners = data.partners;
-//            $scope.sundays = data.sundays;
-//
-//        })
-//        .error(function(data, status, headers, config) {
-//            console.log('no data could be retrieved: ' + status);
-//        });
 
         $scope.changeDate = function() {
             $http.get(paths.public + 'api/search', { params: { startOfWeek: $scope.selected_week }}).then(function(request){
                 $scope.channelPartners = request.data.partners;
                 $scope.materials = request.data.materials;
+                $scope.analytics = request.data.analytics
 
-                var analytics = request.data.analytics;
-                //$filter('selectedParameters')($scope.analytics, 'start_of_week', $scope.selected_week);
-
-
-                $scope.stats = stats.setData(analytics).getStatistics();
+                $scope.stats = stats.getStatistics($scope.analytics);
             });
+        }
 
-            //var filteredData = $filter('selectedParameters')($scope.analytics, 'start_of_week', $scope.selected_week);
+        $scope.change = function() {
+            var filtered = $scope.analytics;
 
-            //$scope.stats = statsFactory(filteredData);
+            if($scope.selected_partner) {
+                filtered = $filter('selectedParameters')(filtered, 'customVarValue1', $scope.selected_partner);
+            }
+
+            if($scope.selected_material) {
+                filtered = $filter('selectedParameters')(filtered, 'customVarValue2', $scope.selected_material);
+            }
+
+            $scope.stats = stats.getStatistics(filtered);
         }
     }])
     .filter('selectedParameters', function() {
@@ -109,39 +103,13 @@ angular.module('app', ['ngResource'])
     .service('stats', ['totals', function(totals) {
         this.stats = {};
 
-        this.setData = function(filteredData) {
-            this.data = filteredData;
-
-            return this;
-        }
-
-        this.getStatistics = function() {
-            this.stats.dlmptLeads = totals.dlmptLeads(this.data);
-            this.stats.imageClicks = totals.clicks(this.data, 'image thumbnail');
-            this.stats.buttonClicks = totals.clicks(this.data, 'call to action buttons');
-            this.stats.uniquePageviews = totals.views(this.data, 'uniquePageviews');
-            this.stats.pageviews = totals.views(this.data, 'pageviews');
+        this.getStatistics = function(filteredData) {
+            this.stats.dlmptLeads = totals.dlmptLeads(filteredData);
+            this.stats.imageClicks = totals.clicks(filteredData, 'image thumbnail');
+            this.stats.buttonClicks = totals.clicks(filteredData, 'call to action buttons');
+            this.stats.uniquePageviews = totals.views(filteredData, 'uniquePageviews');
+            this.stats.pageviews = totals.views(filteredData, 'pageviews');
 
             return this.stats;
         }
-//        this.filteredData = this.filteredData || {};
-//
-//        this.filterData = function(propertyName, value) {
-//            this.filteredData = $filter('selectedParameters')(this.data, propertyName, value);
-//
-//            return this;
-//        }
-//
-//        this.getStats = function() {
-//            return this.filteredData;
-//        }
-
-
-//        this.originalData = this.originalData || {};
-//
-//        this.filteredData = this.filteredData || {};
-//
-//        this.filterData = function(propertyName, value) {
-//            this.filteredData =
-//        }
     }]);
