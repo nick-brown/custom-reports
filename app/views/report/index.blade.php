@@ -4,6 +4,12 @@
     <% HTML::script('//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js') %>
     <% HTML::script('//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular-resource.min.js') %>
     <% HTML::script('js/app.js') %>
+    <script>
+        app.service('storage', function() {
+            this.analytics = <% json_encode($analytics) %>;
+            this.sundays = <% json_encode($sundays) %>;
+        });
+    </script>
 @stop
 
 @section('body')

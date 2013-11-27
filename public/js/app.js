@@ -1,18 +1,22 @@
-angular.module('app', ['ngResource'])
-    .controller('DropdownCtrl', ['$scope', '$http', '$filter', 'stats', function($scope, $http, $filter, stats) {
+var app = angular.module('app', ['ngResource'])
+    .controller('DropdownCtrl', ['$scope', '$http', '$filter', 'stats', 'storage', 'list', function($scope, $http, $filter, stats, storage, list) {
         // Consider using $resource instead of $http
-        $http.get(paths.public + 'api/dates').then(function(request) {
-            $scope.sundays = request.data;
-        });
+        $scope.sundays = storage.sundays;
 
         $scope.changeDate = function() {
-            $http.get(paths.public + 'api/search', { params: { startOfWeek: $scope.selected_week }}).then(function(request){
-                $scope.channelPartners = request.data.partners;
-                $scope.materials = request.data.materials;
-                $scope.analytics = request.data.analytics
+            var filtered = $filter('selectedParameters')(storage.analytics, 'start_of_week', $scope.selected_week);
 
-                $scope.stats = stats.getStatistics($scope.analytics);
-            });
+            $scope.stats = stats.getStatistics(filtered);
+
+            $scope.channelPartners = list.getPartners(filtered);
+
+//            $http.get(paths.public + 'api/data', { params: { startOfWeek: $scope.selected_week }}).then(function(request){
+//                $scope.channelPartners = request.data.partners;
+//                $scope.materials = request.data.materials;
+//                $scope.analytics = request.data.analytics
+//
+//                $scope.stats = stats.getStatistics($scope.analytics);
+//            });
         }
 
         $scope.change = function() {
@@ -58,6 +62,52 @@ angular.module('app', ['ngResource'])
 
             return out;
         }
+    })
+    .service('list', function() {
+        var array_unique = function(inputArr) {
+            var key = '',
+                tmp_arr2 = [],
+                val = '';
+
+            var __array_search = function (needle, haystack) {
+                var fkey = '';
+                for (fkey in haystack) {
+                    if (haystack.hasOwnProperty(fkey)) {
+                        if ((haystack[fkey] + '') === (needle + '')) {
+                            return fkey;
+                        }
+                    }
+                }
+                return false;
+            };
+
+            for (key in inputArr) {
+                if (inputArr.hasOwnProperty(key)) {
+                    val = inputArr[key];
+                    if (false === __array_search(val, tmp_arr2)) {
+                        tmp_arr2[key] = val;
+                    }
+                }
+            }
+
+            return tmp_arr2;
+        }
+
+        this.getPartners = function(filteredData) {
+            var partners = [];
+
+            for(var property in filteredData) {
+                if(filteredData.hasOwnProperty(property)) {
+                    for(var x = 0; x < filteredData[property].length; x++) {
+                        partners.push(filteredData[property][x].customVarValue1);
+                    }
+                }
+            }
+
+            return array_unique(partners).filter(function(n){return n});
+        };
+
+
     })
     .service('totals', function() {
         // Private sum() method
