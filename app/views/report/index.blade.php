@@ -20,11 +20,11 @@
                 <option value="">Choose week...</option>
             </select>
             &amp;
-            <select ng-options="partner for partner in channelPartners" ng-model="selected_partner" ng-change="change()">
+            <select ng-options="partner for partner in channelPartners" ng-model="selected_partner" ng-change="changePartner()">
                 <option value="">All channel partners...</option>
             </select>
             &amp;
-            <select ng-options="material for material in materials" ng-model="selected_material" ng-change="change()">
+            <select ng-options="material for material in materials" ng-model="selected_material" ng-change="changeMaterial()">
                 <option value="">All Materials...</option>
             </select>
 

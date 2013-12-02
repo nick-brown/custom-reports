@@ -6,29 +6,44 @@ var app = angular.module('app', ['ngResource'])
         $scope.changeDate = function() {
             var filtered = $filter('selectedParameters')(storage.analytics, 'start_of_week', $scope.selected_week);
 
+            $scope.channelPartners = list.getPartners(filtered);
+            $scope.materials = list.getMaterials(filtered);
+
             $scope.stats = stats.getStatistics(filtered);
 
-            $scope.channelPartners = list.getPartners(filtered);
+            $scope.filteredByWeek = filtered;
+        };
 
-//            $http.get(paths.public + 'api/data', { params: { startOfWeek: $scope.selected_week }}).then(function(request){
-//                $scope.channelPartners = request.data.partners;
-//                $scope.materials = request.data.materials;
-//                $scope.analytics = request.data.analytics
-//
-//                $scope.stats = stats.getStatistics($scope.analytics);
-//            });
-        }
-
-        $scope.change = function() {
-            var filtered = $scope.analytics;
+        $scope.changePartner = function() {
+            var filtered = $scope.filteredByWeek;
 
             if($scope.selected_partner) {
                 filtered = $filter('selectedParameters')(filtered, 'customVarValue1', $scope.selected_partner);
             }
 
+            $scope.materials = list.getMaterials(filtered);
+
             if($scope.selected_material) {
                 filtered = $filter('selectedParameters')(filtered, 'customVarValue2', $scope.selected_material);
             }
+
+            $scope.stats = stats.getStatistics(filtered);
+
+        }
+
+        $scope.changeMaterial = function() {
+            var filtered = $scope.filteredByWeek;
+
+            if($scope.selected_material) {
+                filtered = $filter('selectedParameters')(filtered, 'customVarValue2', $scope.selected_material);
+            }
+
+            $scope.channelPartners = list.getPartners(filtered);
+
+            if($scope.selected_partner) {
+                filtered = $filter('selectedParameters')(filtered, 'customVarValue1', $scope.selected_partner);
+            }
+
 
             $scope.stats = stats.getStatistics(filtered);
         }
@@ -105,6 +120,20 @@ var app = angular.module('app', ['ngResource'])
             }
 
             return array_unique(partners).filter(function(n){return n});
+        };
+
+        this.getMaterials = function(filteredData) {
+            var materials = [];
+
+            for(var property in filteredData) {
+                if(filteredData.hasOwnProperty(property)) {
+                    for(var x = 0; x < filteredData[property].length; x++) {
+                        materials.push(filteredData[property][x].customVarValue2);
+                    }
+                }
+            }
+
+            return array_unique(materials).filter(function(n){return n});
         };
 
 
