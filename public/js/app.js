@@ -191,4 +191,15 @@ var app = angular.module('app', ['ngResource'])
 
             return this.stats;
         }
+    }])
+    .controller('MonthlyCtrl', ['$scope', function($scope) {
+        $scope.months = ['January', 'February', 'March', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+        $scope.currLeads = [];
+        $scope.lastLeads = [];
+
+        for(var months in $scope.months) {
+            $scope.currLeads.push('');
+            $scope.lastLeads.push('');
+        }
     }]);
