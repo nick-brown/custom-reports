@@ -47,63 +47,39 @@ class ImportController extends BaseController {
 
     // Private
 
-    private function test($first, $second, $combined)
-    {
-        return View::make('import.test', ['first' => $first, 'second' => $second, 'combined' => $combined]);
-    }
-
-    private function getCompletions($start_date, $end_date) 
+    private function getCompletions($start_date, $end_date)
     {
         // Create a new Request object and retrieve our first 7 dimensions
         $completions = new GoogleRequest(ga_email, ga_password);
 
         $completions->requestReportData(
             ga_profile_id,
-            array('customVarValue1', 'customVarValue2', 'country', 'region', 'city', 'hostname', 'longitude'),
-            array('pageviews', 'uniquePageviews', 'goal16Completions', 'goal14Completions'),
-            array('region'),
+            array('customVarValue1', 'customVarValue2', 'hostname', 'city', 'region', 'country'),
+            array('pageviews', 'uniquePageviews', 'goal16Completions', 'goal14Completions', 'goalCompletionsAll'),
+            array('customVarValue1'),
             'pagePath=~material-profile',
             $start_date,
             $end_date
         );
 
-        // Save our dimensions
+        var_dump($completions->getResults());
+
         $results = $completions->getResults();
 
-        // Request a new set of data so we can add hostname
-        $completions->requestReportData(
-            ga_profile_id,
-            array('hostname', 'customVarValue1', 'customVarValue2', 'country', 'region', 'city', 'latitude'),
-            array('pageviews', 'uniquePageviews', 'goal16Completions', 'goal14Completions'),
-            array('region'),
-            'pagePath=~material-profile',
-            $start_date,
-            $end_date 
-        );
-
-        // Iterate over completions, combining the data into one array
-        foreach($completions->getResults() as $k => $entry)
+        // If we're still running at this point, instatiate and save our events
+        foreach($results as $entry)
         {
-            $entry->pushToDimensions(['longitude' => $results[$k]->getDimensions()['longitude']]);
-
             $metrics = $entry->getMetrics();
             $dimensions = $entry->getDimensions();
 
             $combined[] = array_merge($metrics, $dimensions);
         }
 
-        // If this is a test run, pass data to the test method and return the resulting view
-        if(Input::get('test') == 1)
-        {
-            return $this->test($results, $completions->getResults(), $combined);
-        }
-
-        // If we're still running at this point, instatiate and save our completions
         foreach($combined as $completion)
         {
-            $compl = new Completion($completion);
-            $compl->start_of_week = $start_date;
-			$compl->save();
+            $comp = new Completion($completion);
+            $comp->start_of_week = $start_date;
+            $comp->save();
         }
     }
 
@@ -133,12 +109,6 @@ class ImportController extends BaseController {
             $dimensions = $entry->getDimensions();
 
             $combined[] = array_merge($metrics, $dimensions);
-        }
-
-        // If this is a test run, pass data to the test method and return the resulting view
-        if(Input::get('test') == 1)
-        {
-            return;
         }
 
         foreach($combined as $event)
