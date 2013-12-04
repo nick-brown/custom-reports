@@ -31,14 +31,9 @@ class ImportController extends BaseController {
         define('ga_password', '***REMOVED***');
         define('ga_profile_id', '***REMOVED***');
 
-        if(Input::get('test') == 1)
-        {
-            return $this->getCompletions($start_date, $end_date);
-        }
-        else
-        {
-            $this->getCompletions($start_date, $end_date);
-        }
+        $this->getCompletions($start_date, $end_date);
+        $this->getCompletions($start_date, $end_date);
+
         $this->getEvents($start_date, $end_date);
         
         return 'Imported successfully';
