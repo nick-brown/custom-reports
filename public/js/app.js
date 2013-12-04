@@ -184,6 +184,7 @@ var app = angular.module('app', ['ngResource'])
 
         this.getStatistics = function(filteredData) {
             this.stats.dlmptLeads = totals.dlmptLeads(filteredData);
+            this.stats.allLeads = totals.views(filteredData, 'goalCompletionsAll');
             this.stats.imageClicks = totals.clicks(filteredData, 'image thumbnail');
             this.stats.buttonClicks = totals.clicks(filteredData, 'call to action buttons');
             this.stats.uniquePageviews = totals.views(filteredData, 'uniquePageviews');

@@ -43,7 +43,7 @@
             <div id="totals">
                 DLMPT Leads: {{ stats.dlmptLeads }}
                 <br>
-                All Leads including DLMPT Leads:
+                All Leads including DLMPT Leads: {{ stats.allLeads }}
                 <br>
                 Image Clicks: {{ stats.imageClicks }}
                 <br>
