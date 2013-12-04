@@ -193,8 +193,41 @@ var app = angular.module('app', ['ngResource'])
             return this.stats;
         }
     }])
-    .controller('MonthlyCtrl', ['$scope', function($scope) {
-        $scope.months = ['January', 'February', 'March', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    .controller('MonthlyCtrl', ['$scope', 'storage', function($scope, storage) {
+        $scope.months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+        var today = new Date();
+        var thisYear = today.getFullYear();
+        var lastYear = thisYear - 1;
+        var completions = storage.analytics.completions;
+        var data = {};
+
+        var getDateInfo = function(startOfWeek) {
+            var exploded = startOfWeek.split('-');
+
+            var out = {
+                year: exploded[0],
+                month: exploded[1],
+                startDay: exploded[2],
+                monthName: function() {
+                    return $scope.months[this.month - 1];
+                }
+            }
+
+            return out;
+        };
+
+        for(var x = 0; x < completions.length; x++) {
+            var dateInfo = getDateInfo(completions[x].start_of_week);
+            if( ! data.hasOwnProperty(dateInfo.monthName())) {
+                data[dateInfo.monthName()] = [];
+            }
+
+            data[dateInfo.monthName()].push(completions[x].goalCompletionsAll);
+            // sum all arrays
+        }
+
+        console.log(data);
 
         $scope.currLeads = [];
         $scope.lastLeads = [];
