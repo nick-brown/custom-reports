@@ -10,6 +10,12 @@
             this.sundays = <% json_encode($sundays) %>;
         });
     </script>
+    <style type="text/css">
+        #table { width:300px; border-right:1px solid #000;  }
+        #table > div.col { width:100px; margin:0; padding:0; float:left; text-align:center; border:1px solid #000; border-right:0px; border-top:0px; box-sizing:border-box; }
+        div.col.last { border-right:1px solid #000 !important; }
+        div.col > div { border-top:1px solid #000; }
+    </style>
 @stop
 
 @section('body')
@@ -46,6 +52,28 @@
                 Unique Visitors: {{ stats.uniquePageviews }}
                 <br>
                 Pageviews: {{ stats.pageviews }}
+            </div>
+
+            <br>
+
+            <div ng-controller="MonthlyCtrl">
+                <div id="table">
+                    <div class="col">
+                        <div class="header">Month</div>
+                        <div ng-repeat="month in months">{{ month }}</div>
+                    </div>
+
+                    <div class="col">
+                        <div class="header">{{ current_year || 2013 }} leads</div>
+                        <div ng-repeat="leads in currLeads">{{ leads || "n/a" }}</div>
+                    </div>
+
+                    <div class="last col">
+                        <div class="header">{{ last_year || 2012 }} leads</div>
+                        <div ng-repeat="leads in lastLeads">{{ leads || "n/a" }}</div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
