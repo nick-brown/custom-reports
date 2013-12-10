@@ -65,12 +65,12 @@
 
                     <div class="col">
                         <div class="header">{{ current_year || 2013 }} leads</div>
-                        <div ng-repeat="leads in currLeads">{{ leads || "n/a" }}</div>
+                        <div ng-repeat="leads in leadsByMonth.thisYear">{{ leads || 0 }}</div>
                     </div>
 
                     <div class="last col">
                         <div class="header">{{ last_year || 2012 }} leads</div>
-                        <div ng-repeat="leads in lastLeads">{{ leads || "n/a" }}</div>
+                        <div ng-repeat="leads in leadsByMonth.lastYear">{{ leads || 0 }}</div>
                     </div>
                 </div>
 

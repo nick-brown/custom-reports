@@ -28,7 +28,6 @@ var app = angular.module('app', ['ngResource'])
             }
 
             $scope.stats = stats.getStatistics(filtered);
-
         }
 
         $scope.changeMaterial = function() {
@@ -200,40 +199,62 @@ var app = angular.module('app', ['ngResource'])
         var thisYear = today.getFullYear();
         var lastYear = thisYear - 1;
         var completions = storage.analytics.completions;
-        var data = {};
+        var data = {
+            thisYear: {},
+            lastYear: {}
+        };
+
+        // Add months objects to each year
+        for(var x = 0; x < $scope.months.length; x++) {
+           data['thisYear'][$scope.months[x]] = [];
+           data['lastYear'][$scope.months[x]] = [];
+        }
 
         var getDateInfo = function(startOfWeek) {
             var exploded = startOfWeek.split('-');
 
-            var out = {
+            return {
                 year: exploded[0],
                 month: exploded[1],
                 startDay: exploded[2],
-                monthName: function() {
+                getMonthName: function() {
                     return $scope.months[this.month - 1];
                 }
             }
-
-            return out;
         };
 
+        // records need to be inserted into the correct year
         for(var x = 0; x < completions.length; x++) {
             var dateInfo = getDateInfo(completions[x].start_of_week);
-            if( ! data.hasOwnProperty(dateInfo.monthName())) {
-                data[dateInfo.monthName()] = [];
+
+            if(dateInfo.year == thisYear) {
+                var currYear = 'thisYear';
+            } else if(dateInfo.year == lastYear) {
+                var currYear = 'lastYear';
             }
 
-            data[dateInfo.monthName()].push(completions[x].goalCompletionsAll);
+            // If the record is from the current or previous year, push it to the data object under the corresponding month
+            if(currYear) {
+                data[currYear][dateInfo.getMonthName()].push(completions[x].goalCompletionsAll);
+            }
+
+            var sum = function(arr) {
+                if(arr.length > 0) {
+                    return arr.reduce(function(previous, current) {
+                        return previous + current;
+                    });
+                }
+            };
             // sum all arrays
+        }
+
+        for(var year in data) {
+            for(var month in data[year]) {
+                data[year][month] = sum(data[year][month]);
+            }
         }
 
         console.log(data);
 
-        $scope.currLeads = [];
-        $scope.lastLeads = [];
-
-        for(var months in $scope.months) {
-            $scope.currLeads.push('');
-            $scope.lastLeads.push('');
-        }
+        $scope.leadsByMonth = data;
     }]);
