@@ -222,16 +222,8 @@ var app = angular.module('app', ['ngResource'])
 
 
         var getDateInfo = function(startOfWeek) {
-            var exploded = startOfWeek.split('-');
 
             return {
-                year: exploded[0],
-                month: exploded[1],
-                startDay: exploded[2],
-                getMonthName: function() {
-                    return $scope.months[this.month - 1];
-                }
-            }
         };
 
         // Records need to be inserted into the correct year
@@ -259,4 +251,18 @@ var app = angular.module('app', ['ngResource'])
         }
 
         $scope.leadsByMonth = data;
+    }])
+    .factory('getDateInfo', [function() {
+        return function(startOfweek) {
+            var exploded = startOfWeek.split('-');
+
+            return {
+                year: exploded[0],
+                month: exploded[1],
+                startDay: exploded[2],
+                getMonthName: function() {
+                    return $scope.months[this.month - 1];
+                }
+            }
+        }
     }]);
