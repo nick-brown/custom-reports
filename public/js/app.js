@@ -1,9 +1,11 @@
 Array.prototype.sum = function sum() {
-    //alert(Object.prototype.toString.call( this ));
-    console.log( this.reduce(function(previous, current) {
+    var add = function(previous, current) {
         return previous + current;
-    }));
+    };
+
+    return this.length ? this.reduce(add) : 0;
 };
+
 var app = angular.module('app', ['ngResource'])
     .controller('DropdownCtrl', ['$scope', '$http', '$filter', 'stats', 'storage', 'list', function($scope, $http, $filter, stats, storage, list) {
         // Consider using $resource instead of $http
@@ -144,12 +146,6 @@ var app = angular.module('app', ['ngResource'])
 
     })
     .service('totals', function() {
-        // Private sum() method
-        var sum = function(arr) {
-            return arr.reduce(function(previous, current) {
-                return previous + current;
-            });
-        };
 
         this.dlmptLeads = function(data) {
             var completions = [];
@@ -159,7 +155,7 @@ var app = angular.module('app', ['ngResource'])
                 completions.push(data.completions[x].goal14Completions);
             }
 
-            return completions.length > 0 ? sum(completions) : 0;
+            return completions.length > 0 ? completions.sum() : 0;
         }
 
         this.clicks = function(data, category) {
@@ -210,15 +206,6 @@ var app = angular.module('app', ['ngResource'])
             lastYear: []
         };
 
-        var sum = function(arr) {
-            if(arr.length > 0) {
-                return arr.reduce(function(previous, current) {
-                    return previous + current;
-                });
-            }
-        };
-
-
         // Add months objects to each year
         for(var x = 0; x < $scope.months.length; x++) {
            data['thisYear'][$scope.months[x]] = [];
@@ -239,13 +226,16 @@ var app = angular.module('app', ['ngResource'])
             if(currYear) {
                 data[currYear][$scope.months[dateInfo.month - 1]].push(completions[x].goalCompletionsAll);
             }
-
         }
 
         // Sum all the arrays
         for(var year in data) {
-            for(var month in data[year]) {
-                data[year][month] = sum(data[year][month]);
+            if(data.hasOwnProperty(year)) {
+                for(var month in data[year]) {
+                    if(data[year].hasOwnProperty(month)) {
+                        data[year][month] = data[year][month].sum();
+                    }
+                }
             }
         }
 
