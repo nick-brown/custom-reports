@@ -1,3 +1,9 @@
+Array.prototype.sum = function sum() {
+    //alert(Object.prototype.toString.call( this ));
+    console.log( this.reduce(function(previous, current) {
+        return previous + current;
+    }));
+};
 var app = angular.module('app', ['ngResource'])
     .controller('DropdownCtrl', ['$scope', '$http', '$filter', 'stats', 'storage', 'list', function($scope, $http, $filter, stats, storage, list) {
         // Consider using $resource instead of $http
@@ -220,12 +226,6 @@ var app = angular.module('app', ['ngResource'])
            data['lastYear'][$scope.months[x]] = [];
         }
 
-
-        var getDateInfo = function(startOfWeek) {
-
-            return {
-        };
-
         // Records need to be inserted into the correct year
         for(var x = 0; x < completions.length; x++) {
             var dateInfo = getDateInfo(completions[x].start_of_week);
@@ -253,7 +253,7 @@ var app = angular.module('app', ['ngResource'])
         $scope.leadsByMonth = data;
     }])
     .factory('getDateInfo', [function() {
-        return function(startOfweek) {
+        return function(startOfWeek) {
             var exploded = startOfWeek.split('-');
 
             return {
