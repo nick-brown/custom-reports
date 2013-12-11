@@ -10,12 +10,6 @@
             this.sundays = <% json_encode($sundays) %>;
         });
     </script>
-    <style type="text/css">
-        #table { width:301px; border-right:1px solid #000; }
-        .row > div  { width:100px; margin:0; padding:0; float:left; text-align:center; border:1px solid #000; border-right:0px; border-top:0px; box-sizing:border-box; }
-        .row > div:last-child { border-right:1px solid #000 !important; }
-        .header { border-top:1px solid #000 !important; }
-    </style>
 @stop
 
 @section('body')
@@ -53,27 +47,25 @@
                 <br>
                 Pageviews: {{ stats.pageviews }}
             </div>
+        </div>
 
-            <br>
+        <br>
 
-            <div ng-controller="MonthlyCtrl">
-                <div id="table">
-                    <div class="row">
-                        <div class="header">Month</div>
-                        <div class="header">{{ current_year || 2013 }} leads</div>
-                        <div class="header">{{ last_year || 2012 }} leads</div>
-                    </div>
-                    <div class="row" ng-repeat="month in months">
-                        <div>{{ month }}</div>
+        <div ng-controller="MonthlyCtrl">
+            <table>
+                <tr>
+                    <th>Month</th>
+                    <th>{{ current_year || 2013 }} leads</th>
+                    <th>{{ last_year || 2012 }} leads</th>
+                </tr>
+                <tr ng-repeat="month in months">
+                    <td>{{ month }}</td>
 
-                        <div>{{ leadsByMonth.thisYear[month] || 0 }}</div>
+                    <td>{{ leadsByMonth.thisYear[month] || 0 }}</td>
 
-                        <div>{{ leadsByMonth.lastYear[month] || 0 }}</div>
-                    </div>
-
-                </div>
-
-            </div>
+                    <td>{{ leadsByMonth.lastYear[month] || 0 }}</td>
+                </tr>
+            </table>
         </div>
     </div>
 @stop
