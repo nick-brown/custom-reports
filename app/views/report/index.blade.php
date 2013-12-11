@@ -11,10 +11,10 @@
         });
     </script>
     <style type="text/css">
-        #table { width:300px; border-right:1px solid #000;  }
-        #table > div.col { width:100px; margin:0; padding:0; float:left; text-align:center; border:1px solid #000; border-right:0px; border-top:0px; box-sizing:border-box; }
-        div.col.last { border-right:1px solid #000 !important; }
-        div.col > div { border-top:1px solid #000; }
+        #table { width:301px; border-right:1px solid #000; }
+        .row > div  { width:100px; margin:0; padding:0; float:left; text-align:center; border:1px solid #000; border-right:0px; border-top:0px; box-sizing:border-box; }
+        .row > div:last-child { border-right:1px solid #000 !important; }
+        .header { border-top:1px solid #000 !important; }
     </style>
 @stop
 
@@ -58,20 +58,19 @@
 
             <div ng-controller="MonthlyCtrl">
                 <div id="table">
-                    <div class="col">
+                    <div class="row">
                         <div class="header">Month</div>
-                        <div ng-repeat="month in months">{{ month }}</div>
-                    </div>
-
-                    <div class="col">
                         <div class="header">{{ current_year || 2013 }} leads</div>
-                        <div ng-repeat="leads in leadsByMonth.thisYear">{{ leads || 0 }}</div>
+                        <div class="header">{{ last_year || 2012 }} leads</div>
+                    </div>
+                    <div class="row" ng-repeat="month in months">
+                        <div>{{ month }}</div>
+
+                        <div>{{ leadsByMonth.thisYear[month] || 0 }}</div>
+
+                        <div>{{ leadsByMonth.lastYear[month] || 0 }}</div>
                     </div>
 
-                    <div class="last col">
-                        <div class="header">{{ last_year || 2012 }} leads</div>
-                        <div ng-repeat="leads in leadsByMonth.lastYear">{{ leads || 0 }}</div>
-                    </div>
                 </div>
 
             </div>

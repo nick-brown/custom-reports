@@ -200,15 +200,26 @@ var app = angular.module('app', ['ngResource'])
         var lastYear = thisYear - 1;
         var completions = storage.analytics.completions;
         var data = {
-            thisYear: {},
-            lastYear: {}
+            thisYear: [],
+            lastYear: []
         };
+
+        var sum = function(arr) {
+            if(arr.length > 0) {
+                return arr.reduce(function(previous, current) {
+                    return previous + current;
+                });
+            }
+        };
+
 
         // Add months objects to each year
         for(var x = 0; x < $scope.months.length; x++) {
+           console.log($scope.months[x]);
            data['thisYear'][$scope.months[x]] = [];
            data['lastYear'][$scope.months[x]] = [];
         }
+
 
         var getDateInfo = function(startOfWeek) {
             var exploded = startOfWeek.split('-');
@@ -223,7 +234,7 @@ var app = angular.module('app', ['ngResource'])
             }
         };
 
-        // records need to be inserted into the correct year
+        // Records need to be inserted into the correct year
         for(var x = 0; x < completions.length; x++) {
             var dateInfo = getDateInfo(completions[x].start_of_week);
 
@@ -238,23 +249,14 @@ var app = angular.module('app', ['ngResource'])
                 data[currYear][dateInfo.getMonthName()].push(completions[x].goalCompletionsAll);
             }
 
-            var sum = function(arr) {
-                if(arr.length > 0) {
-                    return arr.reduce(function(previous, current) {
-                        return previous + current;
-                    });
-                }
-            };
-            // sum all arrays
         }
 
+        // Sum all the arrays
         for(var year in data) {
             for(var month in data[year]) {
                 data[year][month] = sum(data[year][month]);
             }
         }
-
-        console.log(data);
 
         $scope.leadsByMonth = data;
     }]);
