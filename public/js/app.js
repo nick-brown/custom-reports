@@ -143,7 +143,6 @@ var app = angular.module('app', ['ngResource'])
             return array_unique(materials).filter(function(n){return n});
         };
 
-
     })
     .service('totals', function() {
 

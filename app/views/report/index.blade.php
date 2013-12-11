@@ -10,6 +10,10 @@
             this.sundays = <% json_encode($sundays) %>;
         });
     </script>
+    <style>
+        td, th { border:1px solid #000; margin:0; padding:0; text-align:center; width:100px; }
+        td:not(:last-child), th:not(:last-child) { border-right:0; }
+    </style>
 @stop
 
 @section('body')
@@ -52,7 +56,7 @@
         <br>
 
         <div ng-controller="MonthlyCtrl">
-            <table>
+            <table cellpadding="0" cellspacing="0">
                 <tr>
                     <th>Month</th>
                     <th>{{ current_year || 2013 }} leads</th>
