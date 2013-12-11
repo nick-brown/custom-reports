@@ -198,7 +198,7 @@ var app = angular.module('app', ['ngResource'])
             return this.stats;
         }
     }])
-    .controller('MonthlyCtrl', ['$scope', 'storage', function($scope, storage) {
+    .controller('MonthlyCtrl', ['$scope', 'storage', 'Dates', function($scope, storage, Dates) {
         $scope.months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
         var today = new Date();
@@ -221,14 +221,13 @@ var app = angular.module('app', ['ngResource'])
 
         // Add months objects to each year
         for(var x = 0; x < $scope.months.length; x++) {
-           console.log($scope.months[x]);
            data['thisYear'][$scope.months[x]] = [];
            data['lastYear'][$scope.months[x]] = [];
         }
 
         // Records need to be inserted into the correct year
         for(var x = 0; x < completions.length; x++) {
-            var dateInfo = getDateInfo(completions[x].start_of_week);
+            var dateInfo = Dates(completions[x].start_of_week);
 
             if(dateInfo.year == thisYear) {
                 var currYear = 'thisYear';
@@ -238,7 +237,7 @@ var app = angular.module('app', ['ngResource'])
 
             // If the record is from the current or previous year, push it to the data object under the corresponding month
             if(currYear) {
-                data[currYear][dateInfo.getMonthName()].push(completions[x].goalCompletionsAll);
+                data[currYear][$scope.months[dateInfo.month - 1]].push(completions[x].goalCompletionsAll);
             }
 
         }
@@ -252,17 +251,14 @@ var app = angular.module('app', ['ngResource'])
 
         $scope.leadsByMonth = data;
     }])
-    .factory('getDateInfo', [function() {
+    .factory('Dates', [function() {
         return function(startOfWeek) {
             var exploded = startOfWeek.split('-');
 
             return {
                 year: exploded[0],
                 month: exploded[1],
-                startDay: exploded[2],
-                getMonthName: function() {
-                    return $scope.months[this.month - 1];
-                }
+                startDay: exploded[2]
             }
         }
     }]);
