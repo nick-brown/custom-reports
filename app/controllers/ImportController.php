@@ -27,9 +27,9 @@ class ImportController extends BaseController {
         }
 
         // Define GA account constants
-        define('ga_email', '***REMOVED***');
-        define('ga_password', '***REMOVED***');
-        define('ga_profile_id', '***REMOVED***');
+        define('ga_email', 'universallasers@gmail.com');
+        define('ga_password', 'notanotherteenmovie');
+        define('ga_profile_id', '10496354');
 
         $this->getCompletions($start_date, $end_date);
         $this->getCompletions($start_date, $end_date);
