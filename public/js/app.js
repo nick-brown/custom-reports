@@ -193,22 +193,44 @@ var app = angular.module('app', ['ngResource'])
             return this.stats;
         }
     }])
-    .controller('MonthlyCtrl', ['$scope', 'storage', 'Dates', function($scope, storage, Dates) {
-        $scope.months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    .controller('MonthlyCtrl', ['$scope', 'leadMonths', function($scope, leadMonths) {
+        $scope.months = leadMonths.getMonths();
+        $scope.leadsByMonth = leadMonths.getLeads();
+    }])
+    .factory('Dates', [function() {
+        return function(startOfWeek) {
+            var exploded = startOfWeek.split('-');
+
+            return {
+                year: exploded[0],
+                month: exploded[1],
+                startDay: exploded[2]
+            }
+        }
+    }])
+    .service('leadMonths', ['storage', 'Dates', function(storage, Dates) {
+        this.getLeads = function() {
+            return data;
+        };
+
+        this.getMonths = function() {
+            return months;
+        };
 
         var today = new Date();
         var thisYear = today.getFullYear();
         var lastYear = thisYear - 1;
         var completions = storage.analytics.completions;
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         var data = {
             thisYear: [],
             lastYear: []
         };
 
-        // Add months objects to each year
-        for(var x = 0; x < $scope.months.length; x++) {
-           data['thisYear'][$scope.months[x]] = [];
-           data['lastYear'][$scope.months[x]] = [];
+        // Add month arrays to each year
+        for(var x = 0; x < months.length; x++) {
+            data['thisYear'][months[x]] = [];
+            data['lastYear'][months[x]] = [];
         }
 
         // Records need to be inserted into the correct year
@@ -223,7 +245,7 @@ var app = angular.module('app', ['ngResource'])
 
             // If the record is from the current or previous year, push it to the data object under the corresponding month
             if(currYear) {
-                data[currYear][$scope.months[dateInfo.month - 1]].push(completions[x].goalCompletionsAll);
+                data[currYear][months[dateInfo.month - 1]].push(completions[x].goalCompletionsAll);
             }
         }
 
@@ -235,19 +257,6 @@ var app = angular.module('app', ['ngResource'])
                         data[year][month] = data[year][month].sum();
                     }
                 }
-            }
-        }
-
-        $scope.leadsByMonth = data;
-    }])
-    .factory('Dates', [function() {
-        return function(startOfWeek) {
-            var exploded = startOfWeek.split('-');
-
-            return {
-                year: exploded[0],
-                month: exploded[1],
-                startDay: exploded[2]
             }
         }
     }]);
